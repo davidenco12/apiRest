@@ -45,7 +45,7 @@ class NotesRepository {
 		$this->notes[$this->notes->length()] = new Note($this->notes->length(), $text);
 	}
 
-	public function setFavorite($nodeId){//Comprobar si existe la nota  y si existe lo haces return true si no existe no lo haces return false
+	public function setFavorite($nodeId){
 		if(isset($nodeId)){
 			$fav = $this->notes[$noteId]->setFavorite();
 			return json_encode(new array("success"=>true, $fav));
