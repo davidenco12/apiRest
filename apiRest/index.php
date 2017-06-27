@@ -30,7 +30,7 @@ $app->post(
 
 // Como USUARIO quiero poder llamar al API para consultar las notas.
 $app->get(
-    '/notas/', function() use ($app){
+    '/notes/', function() use ($app){
        $notes = self::getRepository()->getNotes();
        return json_encode(new array("success"=>true, $notes));
     }
@@ -39,7 +39,7 @@ $app->get(
 
 // Como USUARIO quiero poder llamar al API para consultar una sóla nota.
 $app->get(
-    '/notas/:noteId',function($noteId) use ($app){
+    '/notes/:noteId',function($noteId) use ($app){
        $note =  self::getRepository()->getOneNote($noteId);
        if($note!=null){
             return json_encode(new array("success"=>true, $note));
@@ -50,7 +50,7 @@ $app->get(
 
 // Como USUARIO quiero poder llamar al API para marcar favorita una nota.
 $app->post(
-    '/notas/fav/:idNote',function($idNote) use ($app){
+    '/notes/fav/:idNote',function($idNote) use ($app){
        $values = $request->getParsedBody();
        $idNote = $values['idNote'];
        return self::getRepository()->setFavorite($idNote);
@@ -59,7 +59,7 @@ $app->post(
 
 // Como USUARIO quiero poder llamar al API para consultar las notas marcadas como favoritas.
 $app->get(
-    '/notas/fav',function() use ($app){
+    '/notes/fav',function() use ($app){
        return $NotesRepository->getFavoriteNotes();
     }
 );
