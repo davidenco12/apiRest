@@ -36,7 +36,7 @@
 		    return $this->idNote;
 		}
 
-		public function getIdUser)
+		public function getIdUser()
 		{
 		    return $this->idUser;
 		}
