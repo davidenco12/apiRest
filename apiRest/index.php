@@ -1,49 +1,75 @@
 <?php
 
-
-//incluyo el archivo principal
 include("Slim/Slim.php");
 
-//registro la instancia de slim
 \Slim\Slim::registerAutoloader();
 
-//aplicacion 
-$app = new \Slim\Slim(); //instancia de la clase Slim
+$app = new \Slim\Slim(); 
 
-//routing 
-//accediendo VIA URL
-//http:///www.google.com/
-
-//localhost/apiRest/index.php 
 $app->get(
     '/',function() use ($app){
-    	
-    	//consultas a la base de datos 
-    	// peticiones a otro rest 
-    	// etcetera
-    	$datos = array(
-    					"nombre" => "David", 
-    					"edad" => "28"
-    					);
-
-    	//json 
-        echo json_encode($datos);
+        echo "¡¡Esto es una API para Kubide!!";
     }
 )->setParams(array($app)); 
 
-//localhost/apiRest/index.php/usuario/paco 
-    // "Hola,bienvenido Paco"
-$app->get(
-    '/usuario/:nombre',function($nombre) use ($app){
-    	$id = $nombre;
-    	//almaceno el ID
-    	//conexion con base de datos
-    	//el proceso
-    	// retorno un JSON
-        echo "Hola,bienvenido " . $nombre; 
+
+// Como USUARIO quiero poder llamar al API para crear notas.
+
+$app->post(
+    '/notes/',function() use ($app) {
+        $values = $request->getParsedBody();
+        $text = $values['text'];
+        $note = self::getRepository()->addNote($text);
+
+        if (isset($text) && $text != "") {
+          return json_encode(new array("success"=>true, $note));
+        }
+        return json_encode(new array("success"=>false));
     }
 );
 
-//inicializamos la aplicacion(API)
+// Como USUARIO quiero poder llamar al API para consultar las notas.
+$app->get(
+    '/notas/', function() use ($app){
+       $notes = self::getRepository()->getNotes();
+       return json_encode(new array("success"=>true, $notes));
+    }
+);
+
+
+// Como USUARIO quiero poder llamar al API para consultar una sóla nota.
+$app->get(
+    '/notas/:noteId',function($noteId) use ($app){
+       $note =  self::getRepository()->getOneNote($noteId);
+       if($note!=null){
+            return json_encode(new array("success"=>true, $note));
+       }
+       return json_encode(new array("success"=>false));
+    }
+);
+
+// Como USUARIO quiero poder llamar al API para marcar favorita una nota.
+$app->post(
+    '/notas/fav/:idNote',function($idNote) use ($app){
+       $values = $request->getParsedBody();
+       $idNote = $values['idNote'];
+       return self::getRepository()->setFavorite($idNote);
+    }
+);
+
+// Como USUARIO quiero poder llamar al API para consultar las notas marcadas como favoritas.
+$app->get(
+    '/notas/fav',function() use ($app){
+       return $NotesRepository->getFavoriteNotes();
+    }
+);
+
+private static function getRepository(){
+    return NotesRepository::getInstance();
+}
+
+// Como USUARIO quiero poder llamar al API, es decir, quiero poder tener un servidor local 
+// al que hacer una llamada HTTP y que me devuelva algo.
 $app->run();
 
+?>
